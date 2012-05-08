@@ -72,7 +72,11 @@ size_t fuse_dirent_size(size_t namelen);
 char *fuse_add_dirent(char *buf, const char *name, const struct stat *stbuf,
 		      off_t off);
 
+<<<<<<< HEAD
 #if ( !__FreeBSD__ && !__APPLE__ )
+=======
+#if !defined(__FreeBSD__) && !defined(__NetBSD__)
+>>>>>>> upstream
 
 #include <sys/statfs.h>
 
@@ -139,7 +143,11 @@ struct fuse_session *fuse_lowlevel_new_compat(const char *opts,
 				const struct fuse_lowlevel_ops_compat *op,
 				size_t op_size, void *userdata);
 
+<<<<<<< HEAD
 #endif /* !__FreeBSD__ && !__APPLE__ */
+=======
+#endif /* __FreeBSD__ || __NetBSD__ */
+>>>>>>> upstream
 
 struct fuse_chan_ops_compat24 {
 	int (*receive)(struct fuse_chan *ch, char *buf, size_t size);

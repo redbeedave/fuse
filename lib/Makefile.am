@@ -42,6 +42,7 @@ libfuse4x_la_SOURCES = 		\
 	fuse_opt.c		\
 	fuse_session.c		\
 	fuse_signals.c		\
+	buffer.c		\
 	cuse_lowlevel.c		\
 	helper.c		\
 	modules/subdir.c	\
@@ -49,9 +50,17 @@ libfuse4x_la_SOURCES = 		\
 	$(iconv_source)		\
 	$(mount_source)
 
+<<<<<<< HEAD
 if !DARWIN
 libfuse4x_la_LDFLAGS = @libfuse_libs@ -version-number 2:8:7 \
+=======
+libfuse_la_LDFLAGS = @libfuse_libs@ -version-number 2:9:0 \
+>>>>>>> upstream
 	-Wl,--version-script,$(srcdir)/fuse_versionscript
+
+if NETBSD
+libfuse_la_LIBADD = -lperfuse -lpuffs
+endif
 
 libulockmgr_la_SOURCES = ulockmgr.c
 libulockmgr_la_LDFLAGS = -pthread -version-number 1:0:1

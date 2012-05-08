@@ -11,16 +11,23 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h>
 #include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
+#ifndef __NetBSD__
 #include <mntent.h>
+#endif
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <sys/mount.h>
 #include <sys/param.h>
 
+#ifdef __NetBSD__
+#define umount2(mnt, flags) unmount(mnt, (flags == 2) ? MNT_FORCE : 0)
+#define mtab_needs_update(mnt) 0
+#else
 static int mtab_needs_update(const char *mnt)
 {
 	int res;
@@ -43,18 +50,33 @@ static int mtab_needs_update(const char *mnt)
 		if (errno == ENOENT)
 			return 0;
 	} else {
+		uid_t ruid;
+		int err;
+
 		if (S_ISLNK(stbuf.st_mode))
 			return 0;
 
+		ruid = getuid();
+		if (ruid != 0)
+			setreuid(0, -1);
+
 		res = access(_PATH_MOUNTED, W_OK);
-		if (res == -1 && errno == EROFS)
+		err = (res == -1) ? errno : 0;
+		if (ruid != 0)
+			setreuid(ruid, -1);
+
+		if (err == EROFS)
 			return 0;
 	}
 
 	return 1;
 }
+#endif /* __NetBSD__ */
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> upstream
 static int add_mount(const char *progname, const char *fsname,
 		       const char *mnt, const char *type, const char *opts)
 {
